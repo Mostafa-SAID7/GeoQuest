@@ -103,6 +103,11 @@ export default function QuizPage() {
     setSelectedAnswer(answerIndex)
   }
 
+  const handleSubmitAnswer = () => {
+    if (selectedAnswer === null) return
+    setShowResult(true)
+  }
+
   const handleNextQuestion = () => {
     if (selectedAnswer === null) return
 
@@ -119,8 +124,10 @@ export default function QuizPage() {
       setSelectedAnswer(null)
       setShowResult(false)
     } else {
-      // Quiz completed
-      setShowResult(true)
+      // Quiz completed - show final results
+      setTimeout(() => {
+        setCurrentQuestion(questions.length) // This will trigger the results screen
+      }, 1500) // Small delay to show the last question result
     }
   }
 
@@ -140,54 +147,163 @@ export default function QuizPage() {
 
   if (currentQuestion >= questions.length && showResult) {
     const percentage = Math.round((score / questions.length) * 100)
-    const isExcellent = percentage >= 80
-    const isGood = percentage >= 60
+    const isExcellent = percentage >= 90
+    const isGood = percentage >= 70
+    const isOkay = percentage >= 50
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-400 to-purple-600 p-4">
-        <div className="container mx-auto max-w-2xl">
-          <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-4">
+        <div className="container mx-auto max-w-3xl">
+          <Card className="bg-white/95 backdrop-blur-sm shadow-2xl border-0">
+            <CardHeader className="text-center pb-4">
+              <div className="mx-auto mb-6 relative">
                 {isExcellent ? (
-                  <Trophy className="w-16 h-16 text-yellow-500" />
+                  <div className="relative">
+                    <Trophy className="w-20 h-20 text-yellow-500 mx-auto animate-bounce" />
+                    <div className="absolute -top-2 -right-2 text-2xl animate-pulse">✨</div>
+                    <div className="absolute -bottom-2 -left-2 text-2xl animate-pulse">🎉</div>
+                  </div>
                 ) : isGood ? (
-                  <Star className="w-16 h-16 text-blue-500" />
+                  <div className="relative">
+                    <Star className="w-20 h-20 text-blue-500 mx-auto animate-pulse" />
+                    <div className="absolute -top-1 -right-1 text-xl">⭐</div>
+                  </div>
+                ) : isOkay ? (
+                  <CheckCircle className="w-20 h-20 text-green-500 mx-auto" />
                 ) : (
-                  <CheckCircle className="w-16 h-16 text-green-500" />
+                  <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto">
+                    <span className="text-3xl">📚</span>
+                  </div>
                 )}
               </div>
-              <CardTitle className="text-3xl font-bold">
-                {isExcellent ? "Excellent Work! 🎉" : isGood ? "Great Job! 👏" : "Good Effort! 💪"}
+              <CardTitle className="text-4xl font-bold mb-2">
+                {isExcellent ? "Outstanding! 🌟" : 
+                 isGood ? "Great Job! 👏" : 
+                 isOkay ? "Good Effort! 💪" : 
+                 "Keep Learning! 📖"}
               </CardTitle>
+              <p className="text-lg text-gray-600">
+                {isExcellent ? "You're a geography superstar!" :
+                 isGood ? "You really know your geography!" :
+                 isOkay ? "You're on the right track!" :
+                 "Practice makes perfect!"}
+              </p>
             </CardHeader>
-            <CardContent className="text-center space-y-6">
-              <div className="text-6xl font-bold text-blue-600">
-                {score}/{questions.length}
-              </div>
-              <div className="text-xl text-gray-600">
-                You scored {percentage}%
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                <div className="bg-green-100 p-4 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">{score}</div>
-                  <div className="text-sm text-green-700">Correct</div>
+            <CardContent className="text-center space-y-8">
+              {/* Score Display */}
+              <div className="relative">
+                <div className="text-8xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  {score}/{questions.length}
                 </div>
-                <div className="bg-red-100 p-4 rounded-lg">
-                  <div className="text-2xl font-bold text-red-600">{questions.length - score}</div>
-                  <div className="text-sm text-red-700">Incorrect</div>
+                <div className="text-2xl text-gray-600 mt-2">
+                  {percentage}% Correct
+                </div>
+                {percentage >= 80 && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span className="text-2xl animate-bounce">🎯</span>
+                  </div>
+                )}
+              </div>
+            
+              {/* Detailed Results */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-2xl mx-auto">
+                <div className="bg-green-50 border-2 border-green-200 p-6 rounded-xl">
+                  <div className="text-3xl font-bold text-green-600 mb-1">{score}</div>
+                  <div className="text-green-700 font-medium">Correct Answers</div>
+                  <div className="text-green-600 text-sm mt-1">Great work! 🎉</div>
+                </div>
+                <div className="bg-red-50 border-2 border-red-200 p-6 rounded-xl">
+                  <div className="text-3xl font-bold text-red-600 mb-1">{questions.length - score}</div>
+                  <div className="text-red-700 font-medium">Incorrect</div>
+                  <div className="text-red-600 text-sm mt-1">Room to improve 📈</div>
+                </div>
+                <div className="bg-blue-50 border-2 border-blue-200 p-6 rounded-xl">
+                  <div className="text-3xl font-bold text-blue-600 mb-1">{percentage}%</div>
+                  <div className="text-blue-700 font-medium">Final Score</div>
+                  <div className="text-blue-600 text-sm mt-1">
+                    {percentage >= 90 ? "Excellent! 🌟" :
+                     percentage >= 70 ? "Very Good! 👍" :
+                     percentage >= 50 ? "Good! 😊" : "Keep trying! 💪"}
+                  </div>
                 </div>
               </div>
 
-              <div className="flex gap-4 justify-center">
-                <Button onClick={resetQuiz} variant="outline">
+              {/* Performance Message */}
+              <Card className={`max-w-md mx-auto ${
+                isExcellent ? "bg-gradient-to-r from-yellow-100 to-orange-100 border-yellow-300" :
+                isGood ? "bg-gradient-to-r from-blue-100 to-purple-100 border-blue-300" :
+                isOkay ? "bg-gradient-to-r from-green-100 to-teal-100 border-green-300" :
+                "bg-gradient-to-r from-orange-100 to-red-100 border-orange-300"
+              } border-2`}>
+                <CardContent className="p-4">
+                  <h4 className="font-bold text-lg mb-2">
+                    {isExcellent ? "🏆 Geography Master!" :
+                     isGood ? "⭐ Well Done!" :
+                     isOkay ? "📚 Keep Learning!" :
+                     "🎯 Try Again!"}
+                  </h4>
+                  <p className="text-sm text-gray-700">
+                    {isExcellent ? "You've mastered this topic! Ready for the next challenge?" :
+                     isGood ? "You have a solid understanding of geography. Keep it up!" :
+                     isOkay ? "You're making progress! Review the explanations and try again." :
+                     "Don't give up! Every expert was once a beginner."}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                <Button 
+                  onClick={resetQuiz} 
+                  variant="outline" 
+                  size="lg"
+                  className="bg-white hover:bg-gray-50 border-2 border-gray-300"
+                >
+                  <span className="mr-2">🔄</span>
                   Try Again
                 </Button>
+                <Link href={`/quiz/${theme}`}>
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="bg-white hover:bg-gray-50 border-2 border-blue-300"
+                  >
+                    <span className="mr-2">📝</span>
+                    New Quiz
+                  </Button>
+                </Link>
+                <Link href="/dashboard">
+                  <Button 
+                    size="lg"
+                    className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700"
+                  >
+                    <span className="mr-2">📊</span>
+                    View Dashboard
+                  </Button>
+                </Link>
                 <Link href="/">
-                  <Button>Back to Home</Button>
+                  <Button 
+                    size="lg"
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                  >
+                    <span className="mr-2">🏠</span>
+                    Back Home
+                  </Button>
                 </Link>
               </div>
+
+              {/* Encouragement for next steps */}
+              {percentage >= 70 && (
+                <Card className="bg-gradient-to-r from-green-500 to-blue-600 text-white border-0 max-w-md mx-auto">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl mb-2">🎯</div>
+                    <h4 className="font-bold mb-1">Ready for More?</h4>
+                    <p className="text-white/90 text-sm">
+                      Try another geography topic to earn more badges!
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -294,18 +410,18 @@ export default function QuizPage() {
               <div></div>
               {!showResult ? (
                 <Button 
-                  onClick={showQuestionResult}
+                  onClick={handleSubmitAnswer}
                   disabled={selectedAnswer === null}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600"
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
                 >
                   Submit Answer
                 </Button>
               ) : (
                 <Button 
                   onClick={handleNextQuestion}
-                  className="bg-gradient-to-r from-green-500 to-blue-600"
+                  className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700"
                 >
-                  {currentQuestion < questions.length - 1 ? "Next Question" : "See Results"}
+                  {currentQuestion < questions.length - 1 ? "Next Question →" : "Show Final Results 🎉"}
                 </Button>
               )}
             </div>
