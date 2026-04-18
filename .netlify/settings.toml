@@ -1,0 +1,7 @@
+# Netlify settings to disable framework detection
+[build]
+  framework = ""
+  
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  NETLIFY_FRAMEWORK = ""
