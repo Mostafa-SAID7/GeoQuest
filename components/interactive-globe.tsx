@@ -56,7 +56,6 @@ function Globe() {
             color="white"
             anchorX="center"
             anchorY="middle"
-            font="/fonts/Inter-Bold.ttf"
           >
             {country.name}
           </Text>
