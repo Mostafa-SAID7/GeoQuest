@@ -5,6 +5,8 @@
   
 [build.environment]
   NODE_VERSION = "22.14.0"
+  # Force npm instead of pnpm
+  NPM_FLAGS = "--legacy-peer-deps"
   # Explicitly set framework to prevent auto-detection issues
   NETLIFY_FRAMEWORK = "nextjs"
 
