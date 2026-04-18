@@ -1,6 +1,6 @@
 # Netlify configuration for static site (Next.js export)
 [build]
-  command = "npm install --legacy-peer-deps && npm run build && ls -la out/"
+  command = "npm install --legacy-peer-deps && npm run build"
   publish = "out"
   
 [build.environment]
@@ -8,8 +8,6 @@
   NPM_FLAGS = "--legacy-peer-deps"
   # Force static site deployment
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
-  # Disable framework detection
-  NETLIFY_FRAMEWORK = ""
 
 # Security headers
 [[headers]]

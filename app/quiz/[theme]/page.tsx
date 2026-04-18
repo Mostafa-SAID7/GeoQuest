@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -129,10 +129,6 @@ export default function QuizPage() {
         setCurrentQuestion(questions.length) // This will trigger the results screen
       }, 1500) // Small delay to show the last question result
     }
-  }
-
-  const showQuestionResult = () => {
-    setShowResult(true)
   }
 
   const resetQuiz = () => {

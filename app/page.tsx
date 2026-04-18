@@ -1,12 +1,28 @@
 "use client"
 
 import { useState } from "react"
+import dynamic from "next/dynamic"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Globe, BookOpen, Trophy, Users, Star, Map, Mountain, Waves } from 'lucide-react'
 import Link from "next/link"
-import { InteractiveGlobe } from "@/components/interactive-globe"
+
+// Dynamic import to prevent SSR issues with Three.js
+const InteractiveGlobe = dynamic(
+  () => import("@/components/interactive-globe").then((mod) => ({ default: mod.InteractiveGlobe })),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full bg-gradient-to-b from-blue-900 to-blue-600 rounded-lg flex items-center justify-center text-white">
+        <div className="text-center">
+          <Globe className="w-12 h-12 mx-auto mb-2 animate-spin" />
+          <p>Loading Globe...</p>
+        </div>
+      </div>
+    )
+  }
+)
 
 export default function HomePage() {
   const [selectedTheme, setSelectedTheme] = useState<string | null>(null)

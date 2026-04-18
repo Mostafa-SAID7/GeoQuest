@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, Suspense } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
 import { OrbitControls, Sphere, Text } from "@react-three/drei"
 import * as THREE from "three"
@@ -45,7 +45,7 @@ function Globe() {
       {countries.map((country, index) => (
         <group key={country.name}>
           <Sphere
-            position={country.position}
+            position={country.position as [number, number, number]}
             args={[0.1, 16, 16]}
           >
             <meshStandardMaterial color={country.color} />
@@ -78,19 +78,21 @@ function Globe() {
 export function InteractiveGlobe() {
   return (
     <div className="w-full h-full bg-gradient-to-b from-blue-900 to-blue-600 rounded-lg">
-      <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
-        <ambientLight intensity={0.6} />
-        <pointLight position={[10, 10, 10]} intensity={1} />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} />
-        <Globe />
-        <OrbitControls
-          enableZoom={true}
-          enablePan={false}
-          minDistance={3}
-          maxDistance={8}
-          autoRotate={false}
-        />
-      </Canvas>
+      <Suspense fallback={<div className="w-full h-full flex items-center justify-center text-white">Loading Globe...</div>}>
+        <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
+          <ambientLight intensity={0.6} />
+          <pointLight position={[10, 10, 10]} intensity={1} />
+          <pointLight position={[-10, -10, -10]} intensity={0.5} />
+          <Globe />
+          <OrbitControls
+            enableZoom={true}
+            enablePan={false}
+            minDistance={3}
+            maxDistance={8}
+            autoRotate={false}
+          />
+        </Canvas>
+      </Suspense>
     </div>
   )
 }
